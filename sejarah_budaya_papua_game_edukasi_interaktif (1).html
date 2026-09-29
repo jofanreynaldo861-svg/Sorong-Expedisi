@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sejarah & Budaya Papua - Game Edukasi Interaktif</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        timber: { DEFAULT: '#8B5A2B', dark: '#5C3A1A', light: '#D2B48C' },
+                        tealPapua: { DEFAULT: '#008080', dark: '#004D4D', light: '#E0F2F1' },
+                        indigoForest: { DEFAULT: '#1A2E40', dark: '#0F1B26', light: '#2C4960' },
+                        brass: { DEFAULT: '#D4AF37', hover: '#AA8C2C', light: '#FFF8DC' }
+                    },
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        
+        /* Custom Scrollbar for smooth touch-scrolling */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
+        ::-webkit-scrollbar-thumb { background: rgba(0,128,128,0.4); border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0,128,128,0.8); }
+
+        /* Touch interaction helper animations */
+        .touch-bounce { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+        .touch-bounce:active { transform: scale(0.96); }
+
+        /* Custom Drag and Drop classes */
+        .dragging { opacity: 0.5; border: 2px dashed #D4AF37 !important; }
+        .drag-over { border: 2px solid #008080 !important; background-color: rgba(224, 242, 241, 0.5); }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-full flex flex-col font-sans overflow-x-hidden">
+
+    <header class="sticky top-0 z-40 bg-indigoForest-dark/95 backdrop-blur border-b border-tealPapua/30 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 sm:h-20">
+                <!-- Title & Brand -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('home')">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-brass to-timber flex items-center justify-center text-slate-900 shadow-md">
+                        <i class="fa-solid me-0.5 fa-feather-pointed text-xl sm:text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-cinzel font-bold text-base sm:text-xl text-brass leading-tight tracking-wide">Papua EduGame</h1>
+                        <p class="text-xs text-teal-300 font-medium">Sorong & Klamono Edition</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Chapter Navigation -->
+                <nav class="hidden md:flex space-x-1 lg:space-x-2">
+                    <button onclick="navigateTo('bab1')" id="nav-bab1" class="px-3 py-2 rounded-lg text-sm font-semibold transition hover:bg-tealPapua/20 text-slate-300 hover:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-tree text-amber-500"></i> Bab 1: Malamoi
+                    </button>
+                    <button onclick="navigateTo('bab2')" id="nav-bab2" class="px-3 py-2 rounded-lg text-sm font-semibold transition hover:bg-tealPapua/20 text-slate-300 hover:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-oil-well text-slate-400"></i> Bab 2: Klamono
+                    </button>
+                    <button onclick="navigateTo('bab3')" id="nav-bab3" class="px-3 py-2 rounded-lg text-sm font-semibold transition hover:bg-tealPapua/20 text-slate-300 hover:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-ship text-sky-400"></i> Bab 3: Perang Dunia II
+                    </button>
+                    <button onclick="navigateTo('bab4')" id="nav-bab4" class="px-3 py-2 rounded-lg text-sm font-semibold transition hover:bg-tealPapua/20 text-slate-300 hover:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-compass text-emerald-400"></i> Bab 4: Ekspedisi
+                    </button>
+                </nav>
+
+                <!-- Actions: Audio, Report & Mobile Menu Button -->
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <button id="audio-toggle-btn" onclick="toggleSoundFX()" title="Efek Suara On/Off" class="min-w-[44px] min-h-[44px] p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-teal-300 hover:bg-slate-700 touch-bounce flex items-center justify-center">
+                        <i class="fa-solid fa-volume-high text-lg" id="audio-icon"></i>
+                    </button>
+                    
+                    <button onclick="openReportModal()" class="min-w-[44px] min-h-[44px] px-3.5 py-2 rounded-xl bg-brass hover:bg-brass-hover text-slate-900 font-bold text-xs sm:text-sm flex items-center gap-2 shadow-md touch-bounce">
+                        <i class="fa-solid fa-file-lines"></i>
+                        <span class="hidden sm:inline">Laporan Tasks</span>
+                    </button>
+
+                    <!-- Mobile Hamburger Toggle -->
+                    <button onclick="toggleMobileMenu()" class="md:hidden min-w-[44px] min-h-[44px] p-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 hover:bg-slate-700 touch-bounce flex items-center justify-center">
+                        <i class="fa-solid fa-bars text-xl" id="mobile-menu-icon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Navigation -->
+        <div id="mobile-menu" class="hidden md:hidden bg-indigoForest/95 border-b border-tealPapua/20 px-4 pt-2 pb-4 space-y-2">
+            <button onclick="navigateTo('bab1'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl text-slate-200 bg-slate-800/50 hover:bg-tealPapua/30 flex items-center gap-3">
+                <i class="fa-solid fa-tree text-amber-500 text-lg w-6"></i>
+                <div>
+                    <div class="font-bold text-sm">Bab 1: Kearifan Lokal Suku Malamoi</div>
+                    <div class="text-xs text-slate-400">Konservasi Hujan & Sistem Barter Klasik</div>
+                </div>
+            </button>
+            <button onclick="navigateTo('bab2'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl text-slate-200 bg-slate-800/50 hover:bg-tealPapua/30 flex items-center gap-3">
+                <i class="fa-solid fa-oil-well text-slate-400 text-lg w-6"></i>
+                <div>
+                    <div class="font-bold text-sm">Bab 2: Klamono Oil Rush</div>
+                    <div class="text-xs text-slate-400">Simulasi Jalur Pipa Oil & Arsip NNGPM</div>
+                </div>
+            </button>
+            <button onclick="navigateTo('bab3'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl text-slate-200 bg-slate-800/50 hover:bg-tealPapua/30 flex items-center gap-3">
+                <i class="fa-solid fa-ship text-sky-400 text-lg w-6"></i>
+                <div>
+                    <div class="font-bold text-sm">Bab 3: Sorong Dalam Perang Dunia II</div>
+                    <div class="text-xs text-slate-400">Pangkalan Pasifik & Taktik Pertahanan</div>
+                </div>
+            </button>
+            <button onclick="navigateTo('bab4'); toggleMobileMenu();" class="w-full text-left px-4 py-3 rounded-xl text-slate-200 bg-slate-800/50 hover:bg-tealPapua/30 flex items-center gap-3">
+                <i class="fa-solid fa-compass text-emerald-400 text-lg w-6"></i>
+                <div>
+                    <div class="font-bold text-sm">Bab 4: Ekspedisi Sorong Raya</div>
+                    <div class="text-xs text-slate-400">Scavenger Hunt & Line Up Sejarah</div>
+                </div>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- ================= HOME / DASHBOARD VIEW ================= -->
+        <section id="view-home" class="space-y-8 animate-fadeIn">
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigoForest via-tealPapua-dark to-slate-900 border border-tealPapua/40 p-6 sm:p-10 shadow-2xl">
+                <div class="relative z-10 max-w-2xl space-y-4">
+                    <span class="inline-block px-3 py-1 rounded-full bg-brass/20 text-brass text-xs font-bold uppercase tracking-wider border border-brass/30">
+                        Petualangan Edukasi Sejarah Papua
+                    </span>
+                    <h2 class="text-2xl sm:text-4xl font-cinzel font-extrabold text-white leading-tight">
+                        Jelajahi Sejarah & Budaya Sorong Raya
+                    </h2>
+                    <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+                        Selamat datang! Temukan kearifan suku Malamoi, sejarah penambangan minyak Klamono, peran pangkalan Pasifik di PD II, hingga warisan budaya lokal interaktif.
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-3">
+                        <button onclick="navigateTo('bab1')" class="min-h-[44px] px-6 py-3 rounded-xl bg-brass hover:bg-brass-hover text-slate-900 font-bold text-sm shadow-lg touch-bounce flex items-center gap-2">
+                            Mulai Petualangan <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                        <button onclick="startSpotlightTutorial()" class="min-h-[44px] px-5 py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-teal-300 border border-tealPapua/40 font-semibold text-sm touch-bounce flex items-center gap-2">
+                            <i class="fa-solid fa-circle-question"></i> Panduan Fitur
+                        </button>
+                    </div>
+                </div>
+                <!-- Background Graphic Element -->
+                <div class="absolute -right-10 -bottom-10 opacity-15 pointer-events-none text-teal-300">
+                    <i class="fa-solid fa-compass text-[240px]"></i>
+                </div>
+            </div>
+
+            <!-- Chapter Selection Grid -->
+            <div>
+                <h3 class="text-xl font-cinzel font-bold text-brass mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-book-open"></i> Modul Pembelajaran Interaktif
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    
+                    <!-- Card Bab 1 -->
+                    <div onclick="navigateTo('bab1')" class="group cursor-pointer rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 hover:border-amber-500/50 p-5 transition-all duration-300 shadow-md hover:shadow-xl touch-bounce flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 text-xl mb-4 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-tree"></i>
+                            </div>
+                            <h4 class="font-cinzel font-bold text-lg text-slate-100 group-hover:text-amber-400 transition">Bab 1: Malamoi</h4>
+                            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                                Kelola konservasi hutan Tani, pelajari filosofi Tana Hutan, & selesaikan tantangan simulasi Barter Klasik.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs font-semibold text-amber-400">
+                            <span>Mulai Bab 1</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Card Bab 2 -->
+                    <div onclick="navigateTo('bab2')" class="group cursor-pointer rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 hover:border-slate-400/50 p-5 transition-all duration-300 shadow-md hover:shadow-xl touch-bounce flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-slate-500/20 border border-slate-500/30 flex items-center justify-center text-slate-300 text-xl mb-4 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-oil-well"></i>
+                            </div>
+                            <h4 class="font-cinzel font-bold text-lg text-slate-100 group-hover:text-slate-300 transition">Bab 2: Klamono</h4>
+                            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                                Bangun jaringan Pipa Minyak NNGPM 1930-an, jelajahi Arsip Sejarah, & simulasi AR Kamera Sederhana.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs font-semibold text-slate-300">
+                            <span>Mulai Bab 2</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Card Bab 3 -->
+                    <div onclick="navigateTo('bab3')" class="group cursor-pointer rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 hover:border-sky-500/50 p-5 transition-all duration-300 shadow-md hover:shadow-xl touch-bounce flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-sky-400 text-xl mb-4 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-ship"></i>
+                            </div>
+                            <h4 class="font-cinzel font-bold text-lg text-slate-100 group-hover:text-sky-400 transition">Bab 3: Perang Dunia II</h4>
+                            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                                Strategi Pasifik Sorong, sejarah bunker militer, serta analisis peta jalur suplai Sekutu & Sekutu Pasifik.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs font-semibold text-sky-400">
+                            <span>Mulai Bab 3</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Card Bab 4 -->
+                    <div onclick="navigateTo('bab4')" class="group cursor-pointer rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500/50 p-5 transition-all duration-300 shadow-md hover:shadow-xl touch-bounce flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl mb-4 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-compass"></i>
+                            </div>
+                            <h4 class="font-cinzel font-bold text-lg text-slate-100 group-hover:text-emerald-400 transition">Bab 4: Ekspedisi</h4>
+                            <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                                Berburu artefak sejarah (Scavenger Hunt) & susun urutan garis waktu sejarah Sorong Raya.
+                            </p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs font-semibold text-emerald-400">
+                            <span>Mulai Bab 4</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= BAB 1: MALAMOI ================= -->
+        <section id="view-bab1" class="hidden space-y-6">
+            <!-- Chapter Header -->
+            <div class="bg-slate-800/90 border border-amber-500/30 rounded-2xl p-5 sm:p-6 shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <span class="text-amber-400 text-xs font-bold uppercase tracking-wider">Bab 1 • Suku Malamoi</span>
+                    <h2 class="text-xl sm:text-2xl font-cinzel font-bold text-white">Konservasi Hutan & Sistem Barter</h2>
+                </div>
+                <!-- Navigation Tabs inside Bab 1 -->
+                <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-700 w-full sm:w-auto">
+                    <button onclick="switchSubTab('bab1', 'sub1')" id="tab-bab1-sub1" class="flex-1 sm:flex-none min-h-[44px] px-4 py-2 rounded-lg text-xs font-bold transition bg-amber-500 text-slate-900">
+                        Simulasi Dilema Hutan
+                    </button>
+                    <button onclick="switchSubTab('bab1', 'sub2')" id="tab-bab1-sub2" class="flex-1 sm:flex-none min-h-[44px] px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white">
+                        Kalkulator Barter Tradisional
+                    </button>
+                </div>
+            </div>
+
+            <!-- SUBTAB 1: Simulasi Dilema Konservasi -->
+            <div id="subview-bab1-sub1" class="space-y-6">
+                <!-- Status Dashboard -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 text-center">
+                        <p class="text-xs text-slate-400 font-medium">Kesehatan Hutan</p>
+                        <p id="b1-forest-health" class="text-xl sm:text-2xl font-bold text-emerald-400 mt-1">100%</p>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 text-center">
+                        <p class="text-xs text-slate-400 font-medium">Kesejahteraan Marga</p>
+                        <p id="b1-welfare" class="text-xl sm:text-2xl font-bold text-amber-400 mt-1">75%</p>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 text-center">
+                        <p class="text-xs text-slate-400 font-medium">Kepatuhan Adat (Sasi)</p>
+                        <p id="b1-sasi-status" class="text-xl sm:text-2xl font-bold text-teal-400 mt-1">Aktif</p>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 text-center">
+                        <p class="text-xs text-slate-400 font-medium">Skor Konservasi</p>
+                        <p id="b1-score" class="text-xl sm:text-2xl font-bold text-brass mt-1">0</p>
+                    </div>
+                </div>
+
+                <!-- Dilema Interactive Card -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-8 shadow-xl space-y-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-lg">
+                            <i class="fa-solid fa-tree font-bold"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-cinzel text-lg font-bold text-white">Skenario Dilema Pengelolaan Wilayah</h3>
+                            <p class="text-xs text-slate-400">Pilih tindakan terbaik berdasarkan kearifan lokal Suku Malamoi.</p>
+                        </div>
+                    </div>
+
+                    <div id="b1-dilemma-container" class="bg-slate-900/80 rounded-xl p-4 sm:p-6 border border-slate-700 space-y-4">
+                        <p id="b1-dilemma-text" class="text-sm sm:text-base text-slate-200 leading-relaxed">
+                            Perusahaan luar menawarkan kerja sama pembukaan lahan sagu skala besar di area hutan sakral. Bagaimana langkah Anda sebagai kepala marga?
+                        </p>
+                        
+                        <!-- Options Grid (2x2 on desktop, 1 col on mobile) -->
+                        <div id="b1-options-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                            <!-- Injected via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUBTAB 2: Kalkulator Barter Klasik -->
+            <div id="subview-bab1-sub2" class="hidden space-y-6">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-8 shadow-xl space-y-6">
+                    <div>
+                        <h3 class="font-cinzel text-lg font-bold text-white">Simulasi Pertukaran Barter Malamoi</h3>
+                        <p class="text-xs text-slate-400 mt-1">Tukarkan komoditas hasil bumi sesuai nilai rasio adat tradisional.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Input Komoditas A -->
+                        <div class="bg-slate-900 p-5 rounded-xl border border-slate-700 space-y-4">
+                            <h4 class="font-bold text-sm text-amber-400 flex items-center gap-2">
+                                <i class="fa-solid fa-box"></i> Komoditas Yang Dimiliki
+                            </h4>
+                            <div>
+                                <label class="text-xs text-slate-400 block mb-1">Pilih Barang:</label>
+                                <select id="b1-barter-item1" onchange="calculateBarter()" class="w-full bg-slate-800 border border-slate-600 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-400">
+                                    <option value="sagu">Sagu Basah (Tifa/Bungkus)</option>
+                                    <option value="kain">Kain Timur (Noken)</option>
+                                    <option value="ikan">Ikan Asal Pesisir (Ekor)</option>
+                                    <option value="daging">Daging Burung/Babi Hutan (Kg)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 block mb-1">Jumlah Unit:</label>
+                                <input type="number" id="b1-barter-qty1" value="5" min="1" max="100" oninput="calculateBarter()" class="w-full bg-slate-800 border border-slate-600 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-amber-400">
+                            </div>
+                        </div>
+
+                        <!-- Output Hasil Pertukaran B -->
+                        <div class="bg-slate-900 p-5 rounded-xl border border-slate-700 space-y-4 flex flex-col justify-between">
+                            <div>
+                                <h4 class="font-bold text-sm text-teal-400 flex items-center gap-2">
+                                    <i class="fa-solid fa-hand-holding-hand"></i> Hasil Kesetaraan Barter
+                                </h4>
+                                <div id="b1-barter-result" class="mt-4 p-4 rounded-xl bg-slate-800 border border-teal-500/30 text-center space-y-2">
+                                    <p class="text-xs text-slate-400">Anda dapat menukarkan dengan:</p>
+                                    <p class="text-xl font-bold text-brass" id="b1-result-text">2 Kain Timur Klasik</p>
+                                </div>
+                            </div>
+                            <button onclick="recordBarterTask()" class="w-full min-h-[44px] py-3 rounded-xl bg-tealPapua hover:bg-tealPapua-dark text-white font-bold text-sm touch-bounce">
+                                <i class="fa-solid fa-check-circle"></i> Catat Dalam Laporan Tugas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= BAB 2: KLAMONO OIL RUSH ================= -->
+        <section id="view-bab2" class="hidden space-y-6">
+            <div class="bg-slate-800/90 border border-slate-500/30 rounded-2xl p-5 sm:p-6 shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <span class="text-slate-400 text-xs font-bold uppercase tracking-wider">Bab 2 • Era NNGPM (1930-an)</span>
+                    <h2 class="text-xl sm:text-2xl font-cinzel font-bold text-white">Klamono Oil Rush & Infrastruktur</h2>
+                </div>
+                <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-700 w-full sm:w-auto">
+                    <button onclick="switchSubTab('bab2', 'sub1')" id="tab-bab2-sub1" class="flex-1 sm:flex-none min-h-[44px] px-4 py-2 rounded-lg text-xs font-bold transition bg-slate-400 text-slate-900">
+                        Simulasi Pipa Minyak
+                    </button>
+                    <button onclick="switchSubTab('bab2', 'sub2')" id="tab-bab2-sub2" class="flex-1 sm:flex-none min-h-[44px] px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white">
+                        Arsip NNGPM & AR
+                    </button>
+                </div>
+            </div>
+
+            <!-- SUBTAB 1: Jalur Pipa Oil Grid -->
+            <div id="subview-bab2-sub1" class="space-y-6">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                            <h3 class="font-cinzel text-base sm:text-lg font-bold text-white">Rancang Jalur Pipa Klamono ke Pelabuhan Sorong</h3>
+                            <p class="text-xs text-slate-400">Klik petak untuk menghubungkan pipa dari sumur Klamono (S) ke Kilang/Pelabuhan (P).</p>
+                        </div>
+                        <button onclick="resetPipelineGrid()" class="min-h-[44px] px-3 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-xs text-slate-200 font-semibold touch-bounce self-start sm:self-auto">
+                            <i class="fa-solid fa-rotate-left"></i> Reset Pipa
+                        </button>
+                    </div>
+
+                    <!-- Pipeline Grid Canvas/Interactive Grid -->
+                    <div class="overflow-x-auto pb-2">
+                        <div id="b2-pipeline-grid" class="grid grid-cols-5 gap-2 min-w-[300px] max-w-md mx-auto p-3 bg-slate-900 rounded-2xl border border-slate-700">
+                            <!-- Injected 5x5 cells -->
+                        </div>
+                    </div>
+
+                    <div id="b2-pipeline-status" class="p-3 bg-slate-900/60 rounded-xl border border-slate-700 text-center text-xs text-slate-300">
+                        Status Jalur: <span class="font-bold text-amber-400">Belum Terhubung</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUBTAB 2: Encylopedia & AR Viewer -->
+            <div id="subview-bab2-sub2" class="hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Virtual AR View Finder -->
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-4">
+                        <h3 class="font-cinzel text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-camera text-sky-400"></i> Kamera AR Artefak Klamono
+                        </h3>
+                        
+                        <div class="relative h-56 bg-slate-900 rounded-xl border-2 border-dashed border-teal-500/40 flex flex-col items-center justify-center overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-b from-teal-500/10 to-transparent pointer-events-none"></div>
+                            <!-- AR Target Mock -->
+                            <div class="text-center p-4 z-10 space-y-2">
+                                <i class="fa-solid fa-oil-well text-5xl text-amber-400 animate-pulse"></i>
+                                <p class="text-xs font-bold text-slate-200">Sumur Pompa Klasik NNGPM #01</p>
+                                <span class="inline-block px-2 py-0.5 rounded text-[10px] bg-teal-500/20 text-teal-300 border border-teal-500/30">
+                                    AR Terdeteksi (Klamono, 1936)
+                                </span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-400">AR Viewer mendeteksi posisi geografis penambangan awal Nederlandsch Nieuw-Guinee Petroleum Maatschappij.</p>
+                    </div>
+
+                    <!-- NNGPM Archive Encyclopedia -->
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-4 max-h-[380px] overflow-y-auto">
+                        <h3 class="font-cinzel text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-box-archive text-brass"></i> Ensiklopedia Ringkas NNGPM
+                        </h3>
+                        <div class="space-y-3 text-xs text-slate-300">
+                            <div class="p-3 bg-slate-900 rounded-xl border border-slate-700">
+                                <h4 class="font-bold text-brass mb-1">1. Penemuan Minyak 1936</h4>
+                                <p>Konsorsium Shell, Stanvac, & Caltex mendirikan NNGPM untuk mengeksplorasi cekungan Salawati & Klamono.</p>
+                            </div>
+                            <div class="p-3 bg-slate-900 rounded-xl border border-slate-700">
+                                <h4 class="font-bold text-brass mb-1">2. Pembangunan Pipa 1948</h4>
+                                <p>Pipa sepanjang 50+ km dibangun melintasi rawa-rawa untuk mengalirkan minyak dari Klamono ke Pelabuhan Sorong.</p>
+                            </div>
+                            <div class="p-3 bg-slate-900 rounded-xl border border-slate-700">
+                                <h4 class="font-bold text-brass mb-1">3. Dampak Sosial Ekonomi</h4>
+                                <p>Mendorong migrasi pekerja dan urbanisasi awal kawasan Sorong menjadi pusat industri minyak modern.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= BAB 3: PERANG DUNIA II ================= -->
+        <section id="view-bab3" class="hidden space-y-6">
+            <div class="bg-slate-800/90 border border-sky-500/30 rounded-2xl p-5 sm:p-6 shadow-md">
+                <span class="text-sky-400 text-xs font-bold uppercase tracking-wider">Bab 3 • Perang Dunia II</span>
+                <h2 class="text-xl sm:text-2xl font-cinzel font-bold text-white">Sorong Dalam Strategi Pasifik</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Interactive Map / Pacific Map Mock -->
+                <div class="lg:col-span-2 bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-4">
+                    <h3 class="font-cinzel text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-map-location-dot text-sky-400"></i> Peta Pangkalan Udara & Bunker Sorong
+                    </h3>
+                    
+                    <div class="relative bg-slate-900 rounded-xl p-4 border border-slate-700 h-64 sm:h-80 flex items-center justify-center overflow-hidden">
+                        <!-- Simulated Map SVG -->
+                        <svg class="absolute inset-0 w-full h-full opacity-30" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 50 100 Q 150 50 250 120 T 450 180" stroke="#008080" stroke-width="2" fill="none" stroke-dasharray="4"/>
+                            <circle cx="100" cy="110" r="30" fill="#008080" opacity="0.3"/>
+                            <circle cx="300" cy="160" r="45" fill="#008080" opacity="0.3"/>
+                        </svg>
+
+                        <!-- Interactive Hotspots -->
+                        <div class="relative z-10 w-full h-full flex justify-around items-center">
+                            <button onclick="selectBunkerPoint('bunker_efman')" class="p-3 bg-slate-800/90 hover:bg-sky-500 text-sky-300 hover:text-slate-900 rounded-xl border border-sky-400 text-xs font-bold transition shadow-lg touch-bounce flex flex-col items-center gap-1">
+                                <i class="fa-solid fa-plane text-base"></i>
+                                <span>Pulau Efman</span>
+                            </button>
+                            <button onclick="selectBunkerPoint('bunker_ doom')" class="p-3 bg-slate-800/90 hover:bg-sky-500 text-sky-300 hover:text-slate-900 rounded-xl border border-sky-400 text-xs font-bold transition shadow-lg touch-bounce flex flex-col items-center gap-1">
+                                <i class="fa-solid fa-dharmachakra text-base"></i>
+                                <span>Pulau Doom</span>
+                            </button>
+                            <button onclick="selectBunkerPoint('bunker_klamono')" class="p-3 bg-slate-800/90 hover:bg-sky-500 text-sky-300 hover:text-slate-900 rounded-xl border border-sky-400 text-xs font-bold transition shadow-lg touch-bounce flex flex-col items-center gap-1">
+                                <i class="fa-solid fa-shield-halved text-base"></i>
+                                <span>Kilang Minyak</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategic Info Detail Card -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl flex flex-col justify-between space-y-4">
+                    <div>
+                        <h3 class="font-cinzel text-base font-bold text-brass mb-3" id="ww2-info-title">Detail Lokasi Strategis</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed" id="ww2-info-desc">
+                            Pilih salah satu titik pangkalan pada peta di samping untuk mempelajari sejarah pertahanan Tentara Jepang dan operasi Sekutu Jenderal MacArthur.
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-slate-900 rounded-xl border border-slate-700 space-y-2">
+                        <span class="text-[10px] text-sky-400 uppercase font-bold tracking-wider">Fakta Sejarah</span>
+                        <p class="text-xs text-slate-300 italic" id="ww2-info-fact">
+                            Pulau Doom pernah menjadi pusat pemerintahan Belanda sebelum berpindah ke daratan Sorong.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= BAB 4: EKSPEDISI SORONG RAYA ================= -->
+        <section id="view-bab4" class="hidden space-y-6">
+            <div class="bg-slate-800/90 border border-emerald-500/30 rounded-2xl p-5 sm:p-6 shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <span class="text-emerald-400 text-xs font-bold uppercase tracking-wider">Bab 4 • Ekspedisi Sejarah</span>
+                    <h2 class="text-xl sm:text-2xl font-cinzel font-bold text-white">Scavenger Hunt & Line Up Sejarah</h2>
+                </div>
+                <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-700 w-full sm:w-auto">
+                    <button onclick="switchSubTab('bab4', 'sub1')" id="tab-bab4-sub1" class="flex-1 sm:flex-none min-h-[44px] px-4 py-2 rounded-lg text-xs font-bold transition bg-emerald-500 text-slate-900">
+                        Scavenger Hunt Artefak
+                    </button>
+                    <button onclick="switchSubTab('bab4', 'sub2')" id="tab-bab4-sub2" class="flex-1 sm:flex-none min-h-[44px] px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white">
+                        Urutan Timeline Sejarah
+                    </button>
+                </div>
+            </div>
+
+            <!-- SUBTAB 1: Scavenger Hunt Artefak -->
+            <div id="subview-bab4-sub1" class="space-y-6">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="font-cinzel text-base sm:text-lg font-bold text-white">Temukan Artefak Kebudayaan & Sejarah</h3>
+                            <p class="text-xs text-slate-400">Klik item di bawah untuk mengumpulkan inventaris ekspedisi Anda.</p>
+                        </div>
+                        <span class="text-xs font-bold text-brass bg-slate-900 px-3 py-1.5 rounded-lg border border-brass/30">
+                            Terkuak: <span id="scavenger-count">0</span> / 4
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <button onclick="collectArtefact(1)" id="art-1" class="p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-center space-y-2 touch-bounce">
+                            <i class="fa-solid fa-mask text-3xl text-amber-500"></i>
+                            <p class="text-xs font-bold text-slate-200">Ukiran Ukir Malamoi</p>
+                        </button>
+                        <button onclick="collectArtefact(2)" id="art-2" class="p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-center space-y-2 touch-bounce">
+                            <i class="fa-solid fa-coins text-3xl text-slate-400"></i>
+                            <p class="text-xs font-bold text-slate-200">Koin NNGPM 1938</p>
+                        </button>
+                        <button onclick="collectArtefact(3)" id="art-3" class="p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-center space-y-2 touch-bounce">
+                            <i class="fa-solid fa-helmet-safety text-3xl text-sky-400"></i>
+                            <p class="text-xs font-bold text-slate-200">Helm Tentara Pasifik</p>
+                        </button>
+                        <button onclick="collectArtefact(4)" id="art-4" class="p-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-center space-y-2 touch-bounce">
+                            <i class="fa-solid fa-drum text-3xl text-emerald-400"></i>
+                            <p class="text-xs font-bold text-slate-200">Tifa Tradisional</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUBTAB 2: Timeline Ordering Puzzle (Touch-friendly with fallback) -->
+            <div id="subview-bab4-sub2" class="hidden space-y-6">
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl space-y-6">
+                    <div>
+                        <h3 class="font-cinzel text-base sm:text-lg font-bold text-white">Susun Urutan Garis Waktu Sejarah Sorong</h3>
+                        <p class="text-xs text-slate-400 mt-1">Gunakan tombol Panah Atas/Bawah (Touch-optimized) atau Drag untuk mengurutkan peristiwa dari yang paling awal.</p>
+                    </div>
+
+                    <!-- Timeline Items List -->
+                    <div id="timeline-list" class="space-y-3">
+                        <!-- Injected via JavaScript -->
+                    </div>
+
+                    <div class="flex gap-3 pt-2">
+                        <button onclick="checkTimelineOrder()" class="flex-1 min-h-[44px] py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-bold text-sm touch-bounce">
+                            <i class="fa-solid fa-check-double"></i> Verifikasi Urutan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SPOTLIGHT TUTORIAL OVERLAY -->
+    <div id="spotlight-overlay" class="fixed inset-0 z-50 pointer-events-none hidden">
+        <div class="absolute inset-0 bg-slate-950/80 transition-opacity duration-300"></div>
+        <div id="spotlight-box" class="absolute bg-slate-800 border-2 border-brass rounded-2xl p-5 shadow-2xl text-slate-100 max-w-xs sm:max-w-sm pointer-events-auto transition-all duration-300 space-y-3">
+            <div class="flex justify-between items-center">
+                <h4 class="font-cinzel font-bold text-brass text-sm" id="spotlight-title">Panduan Aplikasi</h4>
+                <span id="spotlight-step-num" class="text-[10px] text-slate-400 font-bold">1/3</span>
+            </div>
+            <p id="spotlight-text" class="text-xs text-slate-300 leading-relaxed">
+                Gunakan navigasi di bagian atas untuk berpindah bab pembelajaran dengan mudah.
+            </p>
+            <div class="flex justify-between pt-2">
+                <button onclick="endSpotlightTutorial()" class="min-h-[44px] px-3 py-1.5 text-xs text-slate-400 hover:text-white font-semibold">
+                    Lewati
+                </button>
+                <button onclick="nextSpotlightStep()" class="min-h-[44px] px-4 py-1.5 bg-brass hover:bg-brass-hover text-slate-900 rounded-lg text-xs font-bold touch-bounce">
+                    Lanjut <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LAPORAN TASK / REPORT MODAL -->
+    <div id="report-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden">
+        <div class="bg-slate-800 border border-tealPapua/40 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col justify-between">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                <h3 class="font-cinzel text-lg font-bold text-brass flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-check"></i> Laporan Tugas Siswa
+                </h3>
+                <button onclick="closeReportModal()" class="min-w-[44px] min-h-[44px] text-slate-400 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3 overflow-y-auto pr-1">
+                <label class="text-xs text-slate-400 block">Nama Siswa / Kelompok:</label>
+                <input type="text" id="report-student-name" placeholder="Masukkan nama lengkap Anda..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-brass">
+
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-2 text-xs">
+                    <div class="flex justify-between text-slate-300">
+                        <span>Skor Konservasi Bab 1:</span>
+                        <span id="rep-score-b1" class="font-bold text-brass">0 Poin</span>
+                    </div>
+                    <div class="flex justify-between text-slate-300">
+                        <span>Pipa Oil Bab 2:</span>
+                        <span id="rep-pipe-b2" class="font-bold text-amber-400">Belum Selesai</span>
+                    </div>
+                    <div class="flex justify-between text-slate-300">
+                        <span>Artefak Ditemukan (Bab 4):</span>
+                        <span id="rep-artefact-b4" class="font-bold text-emerald-400">0 Artefak</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+                <button onclick="copyReportText()" class="flex-1 min-h-[44px] py-3 rounded-xl bg-brass hover:bg-brass-hover text-slate-900 font-bold text-xs sm:text-sm touch-bounce flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-copy"></i> Salin Laporan Tugas
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* SOUND FX GENERATOR (Web Audio API) */
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'click') {
+                    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.05);
+                } else if (type === 'success') {
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                }
+            } catch (e) {
+                console.log('Audio Context muted or unsupported');
+            }
+        }
+
+        function toggleSoundFX() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('audio-icon');
+            if (soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-lg';
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-lg text-rose-400';
+            }
+        }
+
+        /* NAVIGATION MANAGEMENT */
+        let currentView = 'home';
+
+        function navigateTo(viewId) {
+            playSound('click');
+            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+            
+            const target = document.getElementById(`view-${viewId}`);
+            if (target) {
+                target.classList.remove('hidden');
+                currentView = viewId;
+            }
+
+            // Update Navigation active state
+            document.querySelectorAll('nav button').forEach(btn => {
+                btn.classList.remove('bg-tealPapua/30', 'text-white');
+                btn.classList.add('text-slate-300');
+            });
+            const activeNav = document.getElementById(`nav-${viewId}`);
+            if (activeNav) {
+                activeNav.classList.add('bg-tealPapua/30', 'text-white');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            playSound('click');
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function switchSubTab(parentBab, subTabId) {
+            playSound('click');
+            // Hide subviews
+            document.querySelectorAll(`#view-${parentBab} [id^="subview-"]`).forEach(el => el.classList.add('hidden'));
+            document.getElementById(`subview-${parentBab}-${subTabId}`).classList.remove('hidden');
+
+            // Toggle button styles
+            document.querySelectorAll(`#view-${parentBab} [id^="tab-"]`).forEach(btn => {
+                btn.className = "flex-1 sm:flex-none min-h-[44px] px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white";
+            });
+
+            const activeBtn = document.getElementById(`tab-${parentBab}-${subTabId}`);
+            if (activeBtn) {
+                const colorClass = parentBab === 'bab1' ? 'bg-amber-500 text-slate-900' :
+                                 parentBab === 'bab2' ? 'bg-slate-400 text-slate-900' :
+                                 parentBab === 'bab4' ? 'bg-emerald-500 text-slate-900' : 'bg-brass text-slate-900';
+                activeBtn.className = `flex-1 sm:flex-none min-h-[44px] px-4 py-2 rounded-lg text-xs font-bold transition ${colorClass}`;
+            }
+        }
+
+        const b1Dilemmas = [
+            {
+                text: "Perusahaan kayu mengajukan izin penebangan di sekitar wilayah sumber air adat. Bagaimana keputusan Marga?",
+                options: [
+                    { text: "Tolak tegas & terapkan aturan Sasi Adat", health: 15, welfare: -5, score: 20 },
+                    { text: "Izinkan dengan batas zona hutan tutupan", health: 0, welfare: 10, score: 10 },
+                    { text: "Terima seluruh kompensasi tunai", health: -25, welfare: 20, score: -10 }
+                ]
+            },
+            {
+                text: "Masyarakat membutuhkan pembukaan lahan baru untuk pertanian sagu keluarga. Langkah terbaik?",
+                options: [
+                    { text: "Buka lahan secara bergiliran (Sistem Rotasi)", health: 10, welfare: 10, score: 20 },
+                    { text: "Buka area hutan lindung primer sekaligus", health: -20, welfare: 15, score: 0 }
+                ]
+            }
+        ];
+
+        let b1CurrentDilemma = 0;
+        let b1State = { health: 100, welfare: 75, score: 0 };
+
+        function renderB1Dilemma() {
+            const data = b1Dilemmas[b1CurrentDilemma];
+            if (!data) {
+                document.getElementById('b1-dilemma-container').innerHTML = `
+                    <div class="text-center py-6 space-y-3">
+                        <i class="fa-solid fa-circle-check text-4xl text-emerald-400"></i>
+                        <h4 class="font-bold text-white text-base">Seluruh Simulasi Dilema Selesai!</h4>
+                        <p class="text-xs text-slate-400">Anda telah berhasil mengelola kearifan hutan Suku Malamoi.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            document.getElementById('b1-dilemma-text').innerText = data.text;
+            const grid = document.getElementById('b1-options-grid');
+            grid.innerHTML = '';
+
+            data.options.forEach((opt) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs sm:text-sm text-slate-200 transition touch-bounce min-h-[44px]";
+                btn.innerText = opt.text;
+                btn.onclick = () => handleB1Option(opt);
+                grid.appendChild(btn);
+            });
+        }
+
+        function handleB1Option(opt) {
+            playSound('success');
+            b1State.health = Math.max(0, Math.min(100, b1State.health + opt.health));
+            b1State.welfare = Math.max(0, Math.min(100, b1State.welfare + opt.welfare));
+            b1State.score += opt.score;
+
+            document.getElementById('b1-forest-health').innerText = `${b1State.health}%`;
+            document.getElementById('b1-welfare').innerText = `${b1State.welfare}%`;
+            document.getElementById('b1-score').innerText = b1State.score;
+
+            b1CurrentDilemma++;
+            renderB1Dilemma();
+        }
+
+        /* Barter Calculator */
+        function calculateBarter() {
+            const item = document.getElementById('b1-barter-item1').value;
+            const qty = parseInt(document.getElementById('b1-barter-qty1').value) || 1;
+            let result = "";
+
+            if (item === 'sagu') result = `${Math.round(qty * 0.4)} Kain Timur Klasik`;
+            else if (item === 'kain') result = `${qty * 3} Bungkus Sagu Basah`;
+            else if (item === 'ikan') result = `${Math.round(qty * 0.5)} Kg Daging Hutan`;
+            else if (item === 'daging') result = `${qty * 2} Ekor Ikan Pesisir`;
+
+            document.getElementById('b1-result-text').innerText = result;
+        }
+
+        function recordBarterTask() {
+            playSound('success');
+            openReportModal();
+        }
+
+        let pipelineGrid = Array(25).fill(0); // 5x5 grid
+        const startIdx = 0; // S (Sumur)
+        const endIdx = 24;  // P (Pelabuhan)
+
+        function initPipelineGrid() {
+            const container = document.getElementById('b2-pipeline-grid');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 25; i++) {
+                const cell = document.createElement('button');
+                cell.className = "w-12 h-12 sm:w-14 sm:h-14 rounded-xl border flex items-center justify-center font-bold text-xs transition touch-bounce ";
+                
+                if (i === startIdx) {
+                    cell.classList.add('bg-amber-500', 'text-slate-900', 'border-amber-400');
+                    cell.innerHTML = 'S';
+                } else if (i === endIdx) {
+                    cell.classList.add('bg-sky-500', 'text-slate-900', 'border-sky-400');
+                    cell.innerHTML = 'P';
+                } else if (pipelineGrid[i] === 1) {
+                    cell.classList.add('bg-tealPapua', 'text-white', 'border-teal-400');
+                    cell.innerHTML = '<i class="fa-solid fa-link"></i>';
+                } else {
+                    cell.classList.add('bg-slate-800', 'text-slate-500', 'border-slate-700', 'hover:border-slate-500');
+                    cell.innerHTML = '•';
+                }
+
+                cell.onclick = () => togglePipelineCell(i);
+                container.appendChild(cell);
+            }
+        }
+
+        function togglePipelineCell(idx) {
+            if (idx === startIdx || idx === endIdx) return;
+            playSound('click');
+            pipelineGrid[idx] = pipelineGrid[idx] === 1 ? 0 : 1;
+            initPipelineGrid();
+            checkPipelineConnection();
+        }
+
+        function resetPipelineGrid() {
+            playSound('click');
+            pipelineGrid = Array(25).fill(0);
+            initPipelineGrid();
+            document.getElementById('b2-pipeline-status').innerHTML = 'Status Jalur: <span class="font-bold text-amber-400">Belum Terhubung</span>';
+        }
+
+        function checkPipelineConnection() {
+            // Simple check if 5 or more pipes connected
+            const count = pipelineGrid.reduce((a, b) => a + b, 0);
+            if (count >= 5) {
+                playSound('success');
+                document.getElementById('b2-pipeline-status').innerHTML = 'Status Jalur: <span class="font-bold text-emerald-400">Jalur Pipa Terhubung Sempurna!</span>';
+            }
+        }
+
+        const bunkerData = {
+            bunker_efman: {
+                title: "Pulau Efman - Landasan Udara Strategis",
+                desc: "Dipergunakan oleh Tentara Jepang sebagai landasan udara garda depan Pasifik sebelum direbut oleh pasukan Sekutu.",
+                fact: "Landasan udara ini menjadi pangkalan operasi vital di wilayah Sorong Raya."
+            },
+            bunker_doom: {
+                title: "Pulau Doom - Pusat Administrasi & Bunker",
+                desc: "Pulau Doom menyimpan jaringan bunker pertahanan dan gua perlindungan komando Jepang.",
+                fact: "Merupakan pusat pemerintahan kolonial Belanda sebelum pindah ke Kota Sorong."
+            },
+            bunker_klamono: {
+                title: "Kilang Minyak Klamono - Target Operasi",
+                desc: "Sumber daya minyak mentah Klamono menjadi incaran utama untuk bahan bakar armada perang.",
+                fact: "NNGPM mengamankan instalasi minyak dengan guard tentara kolonial."
+            }
+        };
+
+        function selectBunkerPoint(key) {
+            playSound('click');
+            const data = bunkerData[key];
+            if (data) {
+                document.getElementById('ww2-info-title').innerText = data.title;
+                document.getElementById('ww2-info-desc').innerText = data.desc;
+                document.getElementById('ww2-info-fact').innerText = data.fact;
+            }
+        }
+
+        let collectedArtefacts = new Set();
+
+        function collectArtefact(id) {
+            if (collectedArtefacts.has(id)) return;
+            playSound('success');
+            collectedArtefacts.add(id);
+
+            const card = document.getElementById(`art-${id}`);
+            card.classList.add('border-emerald-500', 'bg-emerald-500/10');
+            
+            document.getElementById('scavenger-count').innerText = collectedArtefacts.size;
+        }
+
+        /* Mobile-Friendly Timeline Ordering Puzzle */
+        let timelineItems = [
+            { id: 1, text: "Kearifan Lokal Suku Malamoi & Hukum Adat Sasi", correctOrder: 1 },
+            { id: 2, text: "Penemuan Minyak Klamono oleh NNGPM (1936)", correctOrder: 2 },
+            { id: 3, text: "Sorong Menjadi Pangkalan Strategis Perang Dunia II", correctOrder: 3 },
+            { id: 4, text: "Pembangunan Modern Kota Sorong Raya", correctOrder: 4 }
+        ];
+
+        // Shuffle initially
+        timelineItems = timelineItems.sort(() => Math.random() - 0.5);
+
+        function renderTimelineList() {
+            const list = document.getElementById('timeline-list');
+            list.innerHTML = '';
+
+            timelineItems.forEach((item, index) => {
+                const el = document.createElement('div');
+                el.className = "flex items-center justify-between p-4 bg-slate-900 border border-slate-700 rounded-xl space-x-3";
+                el.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-7 h-7 rounded-full bg-slate-800 text-slate-400 border border-slate-700 flex items-center justify-center font-bold text-xs">${index + 1}</span>
+                        <p class="text-xs sm:text-sm text-slate-200 font-medium">${item.text}</p>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <button onclick="moveTimelineItem(${index}, -1)" ${index === 0 ? 'disabled class="opacity-30 p-1.5"' : 'class="p-1.5 text-amber-400 bg-slate-800 hover:bg-slate-700 rounded touch-bounce"'}>
+                            <i class="fa-solid fa-chevron-up text-xs"></i>
+                        </button>
+                        <button onclick="moveTimelineItem(${index}, 1)" ${index === timelineItems.length - 1 ? 'disabled class="opacity-30 p-1.5"' : 'class="p-1.5 text-amber-400 bg-slate-800 hover:bg-slate-700 rounded touch-bounce"'}>
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </button>
+                    </div>
+                `;
+                list.appendChild(el);
+            });
+        }
+
+        function moveTimelineItem(index, direction) {
+            playSound('click');
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= timelineItems.length) return;
+
+            const temp = timelineItems[index];
+            timelineItems[index] = timelineItems[targetIndex];
+            timelineItems[targetIndex] = temp;
+
+            renderTimelineList();
+        }
+
+        function checkTimelineOrder() {
+            let isCorrect = true;
+            for (let i = 0; i < timelineItems.length; i++) {
+                if (timelineItems[i].correctOrder !== i + 1) {
+                    isCorrect = false;
+                    break;
+                }
+            }
+
+            if (isCorrect) {
+                playSound('success');
+                alert("Selamat! Urutan Garis Waktu Sejarah Sorong Raya Benar!");
+            } else {
+                playSound('click');
+                alert("Urutan belum tepat. Coba periksa kembali kronologi peristiwa!");
+            }
+        }
+
+        const tutorialSteps = [
+            {
+                title: "Navigasi Bab Pembelajaran",
+                text: "Gunakan menu di bagian atas untuk menjelajahi 4 Bab Utama Sejarah & Budaya Papua.",
+                targetId: "nav-bab1"
+            },
+            {
+                title: "Efek Suara Interaktif",
+                text: "Klik tombol ikon Suara untuk mengaktifkan atau mematikan efek audio game.",
+                targetId: "audio-toggle-btn"
+            },
+            {
+                title: "Ekspor Laporan Tugas",
+                text: "Setiap aktivitas interaktif akan tercatat otomatis. Salin Laporan Tugas untuk dikumpulkan ke Guru/Pengajar.",
+                targetId: "report-modal"
+            }
+        ];
+
+        let currentSpotlightStep = 0;
+
+        function startSpotlightTutorial() {
+            playSound('click');
+            currentSpotlightStep = 0;
+            document.getElementById('spotlight-overlay').classList.remove('hidden');
+            showSpotlightStep();
+        }
+
+        function showSpotlightStep() {
+            const step = tutorialSteps[currentSpotlightStep];
+            document.getElementById('spotlight-title').innerText = step.title;
+            document.getElementById('spotlight-text').innerText = step.text;
+            document.getElementById('spotlight-step-num').innerText = `${currentSpotlightStep + 1}/${tutorialSteps.length}`;
+            
+            // Center box for mobile simplicity
+            const box = document.getElementById('spotlight-box');
+            box.style.top = "50%";
+            box.style.left = "50%";
+            box.style.transform = "translate(-50%, -50%)";
+        }
+
+        function nextSpotlightStep() {
+            playSound('click');
+            currentSpotlightStep++;
+            if (currentSpotlightStep >= tutorialSteps.length) {
+                endSpotlightTutorial();
+            } else {
+                showSpotlightStep();
+            }
+        }
+
+        function endSpotlightTutorial() {
+            playSound('click');
+            document.getElementById('spotlight-overlay').classList.add('hidden');
+        }
+
+        /* REPORT MODAL MANAGEMENT */
+        function openReportModal() {
+            playSound('click');
+            document.getElementById('rep-score-b1').innerText = `${b1State.score} Poin`;
+            document.getElementById('rep-pipe-b2').innerText = pipelineGrid.reduce((a, b) => a + b, 0) >= 5 ? 'Terhubung' : 'Belum Selesai';
+            document.getElementById('rep-artefact-b4').innerText = `${collectedArtefacts.size} / 4 Artefak`;
+            
+            document.getElementById('report-modal').classList.remove('hidden');
+        }
+
+        function closeReportModal() {
+            playSound('click');
+            document.getElementById('report-modal').classList.add('hidden');
+        }
+
+        function copyReportText() {
+            const student = document.getElementById('report-student-name').value || "Siswa Anonim";
+            const report = `--- LAPORAN TUGAS PAPUA EDUGAME ---
+Nama Siswa: ${student}
+1. Skor Konservasi Bab 1 (Malamoi): ${b1State.score} Poin
+2. Status Pipa Minyak Bab 2 (Klamono): ${pipelineGrid.reduce((a, b) => a + b, 0) >= 5 ? 'Selesai' : 'Belum Selesai'}
+3. Artefak Ditemukan (Bab 4): ${collectedArtefacts.size} Artefak
+-----------------------------------`;
+
+            // ExecCommand Fallback for Webview / iFrame compatibility
+            const textarea = document.createElement('textarea');
+            textarea.value = report;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            playSound('success');
+            alert('Laporan tugas berhasil disalin ke clipboard!');
+        }
+
+        /* INITIALIZATION ON WINDOW LOAD */
+        window.onload = function() {
+            renderB1Dilemma();
+            calculateBarter();
+            initPipelineGrid();
+            renderTimelineList();
+        };
+    </script>
+</body>
+</html>
